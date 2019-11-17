@@ -1,0 +1,41 @@
+{
+  "manifest_version": 2,
+  "name": "CheckCertif 🔑🔍",
+  "version": "1.1",
+  "description": "Check certificate.",
+  "homepage_url": "https://chkcrt-dev.ecirtam.net/",
+  "applications": {
+    "gecko": {
+      "strict_min_version": "42.0",
+      "id": "check.certificate@ecirtam.net"
+    }
+  },
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "activeTab",
+    "tabs",
+    "storage",
+    "*://*/*"
+  ],
+  "icons": {
+    "48": "icons/icon-48.png"
+  },
+  "browser_action": {
+    "default_icon": {
+      "48": "icons/icon-48.png"
+    },
+    "default_title": "Check certificate.",
+    "default_popup": "html/tabs.html"
+  },
+  "sidebar_action": {
+    "default_title": "Check certificate.",
+    "default_panel": "html/sidebar.html"
+  },
+  "background": {
+    "scripts": [ "js/openpgp/openpgp.min.js", "js/common.js", "js/default.js","js/background.js" ]
+  },
+  "options_ui": {
+    "page": "html/settings.html"
+  }
+}

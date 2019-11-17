@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style type="text/css">
+      th{
+        background-color: #EEE;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <button type="button">Export config</button><br>
+    Import config <input type="file" id="config"><br>
+    <form>
+        Add server<br>
+        Name : <input type="text" id="serverName"><br>
+        URL : <input type="text" id="serverUrl"><br>
+        PGP key :<br><textarea id="serverKey" rows="8" cols="50"></textarea><br>
+        <button type="submit">Add</button><div id="errorAdd" hidden="">Adding error</div>
+    </form>
+    <br>
+    <br>
+    List of servers :<br>
+    <table>
+      <thead>
+        <tr>
+          <th>Enable</th>
+          <th>Status</th>
+          <th>API</th>
+          <th>Name</th>
+          <th>URL</th>
+          <th>PGP key</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="serverList"></tbody>
+    </table>
+    <br>
+    <a href="#" id="reset">Reset config</a>
+    <script src="../js/openpgp/openpgp.min.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/default.js"></script>
+    <script src="../js/settings.js"></script>
+  </body>
+</html>
