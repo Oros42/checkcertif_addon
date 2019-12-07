@@ -87,8 +87,11 @@ function arrayBufferToBase64( buffer ) {
     return window.btoa( binary );
 }
 
-function base64ToArrayBuffer(base64) {
+function base64ToArrayBuffer(base64, base64_2="") {
     var binary_string =  window.atob(base64);
+    if(base64_2 != "") {
+      binary_string +=  window.atob(base64_2);
+    }
     var len = binary_string.length;
     var bytes = new Uint8Array( len );
     for (var i = 0; i < len; i++) {
@@ -122,6 +125,7 @@ async function sendMessage(server, message){
 
   message['pwd'] = key64;
   message['i'] = iv64;
+  message['v'] = apiVersion;
 
 
   const options = {
@@ -156,7 +160,13 @@ async function sendMessage(server, message){
           throw new Error('Something went wrong on api server!');
         }
       }).then(aesResponse => {
-        var cyphertext = base64ToArrayBuffer(aesResponse);
+        let aesResponseSplit = aesResponse.split(';');
+        let cyphertext = null;
+        if (aesResponseSplit.length > 1) {
+          cyphertext = base64ToArrayBuffer(aesResponseSplit[0], aesResponseSplit[1]);
+        } else {
+          cyphertext = base64ToArrayBuffer(aesResponseSplit[1]);
+        }
 
         return crypto.subtle.decrypt({name: 'AES-GCM', iv}, key, cyphertext)
         .then(cleartext => {

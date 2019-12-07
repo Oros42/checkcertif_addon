@@ -1,7 +1,9 @@
+var apiVersion = "0.7";
 var checkcertifServersDefault = [
 {
   "name": "chkcrt",
-  "url": "https://chkcrt-dev.ecirtam.net/",
+ // "url": "https://chkcrt-dev.ecirtam.net/",
+  "url": "http://192.168.1.167/",
   "key": `-----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mE8EXWRCwRMFK4EEAAoCAwTF+21xT6d8gP6K+vy8jH1dKxtWdAl3oSzsGD0m+YUf
