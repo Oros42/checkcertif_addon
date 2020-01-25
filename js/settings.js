@@ -94,6 +94,73 @@ function save(newCheckcertifServers){
   });
 }
 
+function downloadFile(filename, text) {
+  let element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+}
+
+function downloadSettings() {
+  let settings = {
+    'apiVersion': apiVersion, 
+    'checkcertifServers': checkcertifServers,
+    'blacklistHosts':blacklistHosts,
+    'blacklistIp':blacklistIp
+  };
+  downloadFile("checkcertif_settings.json", JSON.stringify(settings));
+}
+
+
+function importSettings(event) {
+  let input = event.target;
+  let reader = new FileReader();
+  reader.onload = function(){
+    try{
+      let json = JSON.parse(reader.result);
+      let settingsToImport = [
+        'apiVersion',
+        'checkcertifServers',
+        'blacklistHosts',
+        'blacklistIp'
+      ]
+      let okToImport = true;
+      for (key of settingsToImport) {
+        if(! key in json){
+          okToImport = false;
+          break;
+        }
+      }
+      if(okToImport) {
+        for (key of settingsToImport) {
+          window[key] = json[key];
+          console.log(key, json[key]);
+        }
+        browser.storage.sync.set({
+          checkcertifServers: checkcertifServers
+        });
+        browser.storage.sync.set({
+          blacklistHosts: blacklistHosts
+        });
+        browser.storage.sync.set({
+          blacklistIp: blacklistIp
+        });
+        listServer(checkcertifServers);
+      }else{
+        alert("Error : can't import this file :-/");
+      } 
+    }catch(error) {
+      //TODO
+      alert("Error : can't import this file :-/");
+    }
+  };
+
+  reader.readAsText(input.files[0]);
+};
+
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
@@ -103,4 +170,5 @@ document.getElementById("reset").addEventListener("click", function(){
   restoreOptions();
   return false;
 });
-
+document.getElementById("exportSettingsBtn").addEventListener("click", downloadSettings);
+document.getElementById("importSettingsBtn").addEventListener("change", importSettings, false);
