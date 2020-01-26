@@ -1,22 +1,22 @@
 html, body {
-  width: 350px;
+	width: 350px;
 }
 
 a {
-  margin: 10px;
-  display: inline-block;
+	margin: 10px;
+	display: inline-block;
 }
 
 .switch-tabs {
-  padding-left: 10px;
+	padding-left: 10px;
 }
 
 .switch-tabs a {
-  display: block;
+	display: block;
 }
 
 .panel {
-  margin: 5px;
+	margin: 5px;
 }
 
 #hashimg{
@@ -25,5 +25,5 @@ a {
 }
 
 #settingsLink {
-	text-decoration:none;
+	text-decoration: none;
 }

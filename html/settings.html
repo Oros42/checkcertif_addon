@@ -2,12 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <style type="text/css">
-      th{
-        background-color: #EEE;
-        text-align: left;
-      }
-    </style>
+    <link type="text/css" rel="stylesheet" href="../css/settings.css" />
   </head>
   <body>
     <button type="button" id="exportSettingsBtn">Export settings</button><br>
@@ -16,8 +11,10 @@
         Add server<br>
         Name : <input type="text" id="serverName"><br>
         URL : <input type="text" id="serverUrl"><br>
-        PGP key :<br><textarea id="serverKey" rows="8" cols="50"></textarea><br>
-        <button type="submit">Add</button><div id="errorAdd" hidden="">Adding error</div>
+        PGP key :<br><textarea id="serverKey" rows="15" cols="64"></textarea><br>
+        <input type="hidden" id="serverId" value="">
+        <button type="submit">Save</button><div id="spinner"></div>
+        <div id="editMsg"></div>        
     </form>
     <br>
     <br>
@@ -30,7 +27,6 @@
           <th>API</th>
           <th>Name</th>
           <th>URL</th>
-          <th>PGP key</th>
           <th>Edit</th>
           <th>Delete</th>
         </tr>

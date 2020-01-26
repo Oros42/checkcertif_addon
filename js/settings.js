@@ -13,17 +13,28 @@ function addServerTr(server) {
     <td>${server.api}</td>
     <td>${server.name}</td>
     <td>${server.url}</td>
-    <td><a href="#">view</a></td>
     <td><a href="#">edit</a></td>
     <td><a href="#">delete</a></td>`;
   tr.children[0].children[0].addEventListener("change", function(e){
     changeServerEnable(server.id, this.checked);
   });
-  tr.children[7].children[0].addEventListener("click", function(){
+  tr.children[5].children[0].addEventListener("click", function(){
+    editSettings(server.id);
+    return false;
+  });
+  tr.children[6].children[0].addEventListener("click", function(){
     deleteSrv(server.id);
     return false;
   });
   serverList.appendChild(tr);
+}
+
+function editSettings(id) {
+  editMsg.innerHTML = "";
+  serverId.value = id;
+  serverName.value = checkcertifServers[id].name;
+  serverUrl.value = checkcertifServers[id].url;
+  serverKey.value = checkcertifServers[id].key;  
 }
 
 function deleteSrv(id) {
@@ -32,24 +43,28 @@ function deleteSrv(id) {
   listServer(checkcertifServers);
 }
 
-
 function listServer(servers){
   serverList.innerHTML = "";
-  for (var serverId in servers) {
-    if(servers[serverId] != null) {
-      servers[serverId].id = serverId;
-      addServerTr(servers[serverId]);
+  for (let id in servers) {
+    if(servers[id] != null) {
+      servers[id].id = id;
+      addServerTr(servers[id]);
     }
   }
 }
 
 async function saveOptions(e) {
-  errorAdd.hidden=true;
+  if(serverName.value || serverUrl.value == "" || serverKey.value == "") {
+    return;
+  }
+  spinner.style.display='block';
+  editMsg.innerHTML="";
   e.preventDefault();
+  let newServerId = document.querySelector("#serverId").value;
   let newServer = {
-    "name": document.querySelector("#serverName").value,
-    "url": document.querySelector("#serverUrl").value,
-    "key": document.querySelector("#serverKey").value,
+    "name": serverName.value,
+    "url": serverUrl.value,
+    "key": serverKey.value,
     "enable": true,
     "status": 0,
     "api": ""
@@ -59,21 +74,34 @@ async function saveOptions(e) {
     newServer['status'] = 1;
     newServer['api'] = msg['message']['api'];
   } else {
-    //TODO show alert
-    errorAdd.hidden=false;
+    editMsg.innerHTML="Error. Wrong response form the server.";
+    spinner.style.display='none';
     return;
   }
 
   // check if exist
-  for (var serverId in checkcertifServers) {
-    if(checkcertifServers[serverId] == newServer.url){
-      //server already exist
-      return;
+  if(newServerId == "") {
+    for (let id in checkcertifServers) {
+      if(checkcertifServers[id] == newServer.url){
+        //server already exist
+        newServerId = id;
+        break;
+      }
     }
   }
-  checkcertifServers.push(newServer);
+  if(newServerId == "") {
+    checkcertifServers.push(newServer);
+  } else {
+    checkcertifServers[newServerId] = newServer;
+  }
   save(checkcertifServers);
+  serverId.value = "";
+  serverName.value = "";
+  serverUrl.value = "";
+  serverKey.value = "";
   listServer(checkcertifServers);
+  editMsg.innerHTML = "ok";
+  spinner.style.display='none';
 }
 
 function restoreOptions() {
@@ -160,7 +188,6 @@ function importSettings(event) {
 
   reader.readAsText(input.files[0]);
 };
-
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
