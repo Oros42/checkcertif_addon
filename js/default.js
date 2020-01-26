@@ -59,6 +59,7 @@ var blacklistIpDefault = [
 var checkcertifServers = [];
 var blacklistHosts = [];
 var blacklistIp = [];
+var domainsList = [];
 
 //browser.storage.sync.clear();
 
@@ -83,7 +84,10 @@ gettingItem.then((res) => {
       checkAllStatus();
       Promise.all([checkAllStatus()]).then(saveCheckcertifServers);
   }
+});
 
+gettingItem = browser.storage.sync.get('blacklistHosts');
+gettingItem.then((res) => {
   if(res.blacklistHosts) {
     blacklistHosts = res.blacklistHosts;
   }else{
@@ -92,7 +96,10 @@ gettingItem.then((res) => {
       blacklistHosts: blacklistHostsDefault
     });
   }
+});
 
+gettingItem = browser.storage.sync.get('blacklistIp');
+gettingItem.then((res) => {
   if(res.blacklistIp) {
     blacklistIp = res.blacklistIp;
   }else{
@@ -100,5 +107,19 @@ gettingItem.then((res) => {
     browser.storage.sync.set({
       blacklistIp: blacklistIpDefault
     });
+  }
+});
+
+gettingItem = browser.storage.sync.get('domainsList');
+gettingItem.then((res) => {
+  if(res.domainsList) {
+    domainsList = res.domainsList;
+  }else{
+    if (typeof domainsListDefault !== 'undefined') {
+      domainsList = domainsListDefault.split("\n");
+      browser.storage.sync.set({
+        domainsList: domainsList
+      });
+    }
   }
 });

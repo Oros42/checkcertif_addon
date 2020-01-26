@@ -33,6 +33,6 @@
     "default_panel": "html/sidebar.html"
   },
   "background": {
-    "scripts": [ "js/openpgp/openpgp.min.js", "js/common.js", "js/default.js","js/background.js" ]
+    "scripts": [ "js/openpgp/openpgp.min.js", "assets/domains.js", "js/common.js", "js/default.js","js/background.js" ]
   }
 }
