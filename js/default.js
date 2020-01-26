@@ -18,9 +18,9 @@ naVT/axL2gD/WijWxsq9OX09pYadrRRs4uoy2zHss7MH6qUCTZdv/wQ=
 =nq0n
 -----END PGP PUBLIC KEY BLOCK-----
 `,
-	"enable": true,
-    "status": 0,
-    "api": "?"
+  "enable": true,
+  "status": 0,
+  "api": "?"
 }
 ];
 
@@ -28,32 +28,32 @@ var whitelistHosts = [];//TODO
 var whitelistIp = [];
 
 var blacklistHostsDefault = [
-	'^.*\\.lan$',
-	'^.*\\.local$',
-	'^.*\\.localdomain$',
-	'^.*localhost$',
-	'^.*ip6-localnet$',
-	'^.*ip6-mcastprefix$',
-	'^.*ip6-allnodes$',
-	'^.*ip6-allrouters$'
+  '^.*\\.lan$',
+  '^.*\\.local$',
+  '^.*\\.localdomain$',
+  '^.*localhost$',
+  '^.*ip6-localnet$',
+  '^.*ip6-mcastprefix$',
+  '^.*ip6-allnodes$',
+  '^.*ip6-allrouters$'
 ];
 var blacklistIpDefault = [
-	//IPv4
-	'^127\\..*$',
-	'^0\\.0\\.0\\.0.*$',
-	'^10\\..*$',
-	'^172\\.(1[6-9]|2[0-9]|30|31)\\..*$',
-	'^192\\.168\\..*$',
-	//IPv6
-	'^::1.*$',
-	'^::1.*$',
-	'^fc[0-9a-fA-F][0-9a-fA-F]:.*$',
-	'^fd[0-9a-fA-F][0-9a-fA-F]:.*$',
-	'^fe80:.*$',
-	'^fe00::.*$',
-	'^ff00::.*$',
-	'^ff02::.*$',
-	'^ff02::.*$'
+  //IPv4
+  '^127\\..*$',
+  '^0\\.0\\.0\\.0.*$',
+  '^10\\..*$',
+  '^172\\.(1[6-9]|2[0-9]|30|31)\\..*$',
+  '^192\\.168\\..*$',
+  //IPv6
+  '^::1.*$',
+  '^::1.*$',
+  '^fc[0-9a-fA-F][0-9a-fA-F]:.*$',
+  '^fd[0-9a-fA-F][0-9a-fA-F]:.*$',
+  '^fe80:.*$',
+  '^fe00::.*$',
+  '^ff00::.*$',
+  '^ff02::.*$',
+  '^ff02::.*$'
 ];
 
 var checkcertifServers = [];
@@ -62,43 +62,43 @@ var blacklistIp = [];
 
 //browser.storage.sync.clear();
 
+async function checkAllStatus() {
+  for (var i = 0; i < checkcertifServers.length; i++) {
+      checkcertifServers[i] = await checkServerStatus(checkcertifServers[i]);
+  }
+}
+
+function saveCheckcertifServers() {
+  browser.storage.sync.set({
+    checkcertifServers: checkcertifServers
+  });
+}
+
 var gettingItem = browser.storage.sync.get('checkcertifServers');
 gettingItem.then((res) => {
-	if(res.checkcertifServers) {
-		checkcertifServers = res.checkcertifServers;
-	}else{
-		checkcertifServers = checkcertifServersDefault;
+  if(res.checkcertifServers) {
+    checkcertifServers = res.checkcertifServers;
+  }else{
+      checkcertifServers = checkcertifServersDefault;
+      checkAllStatus();
+      Promise.all([checkAllStatus()]).then(saveCheckcertifServers);
+  }
 
-		(async () => {
-		var msg = await sendMessage(checkcertifServers[0], {'a':'v'});
-			if(msg['status'] && 'api' in msg['message']) {
-				checkcertifServers[0]['status'] = 1;
-				checkcertifServers[0]['api'] = msg['message']['api'];
-			} else {
-				checkcertifServers[0]['status'] = 0;
-			}
-		})()
+  if(res.blacklistHosts) {
+    blacklistHosts = res.blacklistHosts;
+  }else{
+    blacklistHosts = blacklistHostsDefault;
+    browser.storage.sync.set({
+      blacklistHosts: blacklistHostsDefault
+    });
+  }
 
-		browser.storage.sync.set({
-			checkcertifServers: checkcertifServers
-		});
-	}
-
-	if(res.blacklistHosts) {
-		blacklistHosts = res.blacklistHosts;
-	}else{
-		blacklistHosts = blacklistHostsDefault;
-		browser.storage.sync.set({
-			blacklistHosts: blacklistHostsDefault
-		});
-	}
-
-	if(res.blacklistIp) {
-		blacklistIp = res.blacklistIp;
-	}else{
-		blacklistIp = blacklistIpDefault;
-		browser.storage.sync.set({
-			blacklistIp: blacklistIpDefault
-		});
-	}
+  if(res.blacklistIp) {
+    blacklistIp = res.blacklistIp;
+  }else{
+    blacklistIp = blacklistIpDefault;
+    browser.storage.sync.set({
+      blacklistIp: blacklistIpDefault
+    });
+  }
 });

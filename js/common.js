@@ -196,3 +196,16 @@ async function sendMessage(server, message){
   }
   return returnData;
 }
+
+
+async function checkServerStatus(server) {
+  var msg = await sendMessage(server, {'a':'v'});
+  if(msg['status'] && 'api' in msg['message']) {
+    server['status'] = 1;
+    server['api'] = msg['message']['api'];
+  } else {
+    server['status'] = 0;
+    server['api'] = '?';
+  }
+  return server;
+}
