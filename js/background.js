@@ -4,6 +4,9 @@ function updateTabStatus(tabId, status, urlDomain){
   if(tabs[tabId]["status"] <= status) {
     tabs[tabId]["status"] = status;
     if(urlDomain != "") {
+      if(!(urlDomain in tabs[tabId]["urls"])) {
+        tabs[tabId]["urls"][urlDomain] = { 'status':'','urls':[]};
+      }
       tabs[tabId]["urls"][urlDomain]["status"] = status;
     }
     browser.browserAction.setIcon({tabId:tabId, path: "icons/"+tabStatus[status]['img']});
@@ -16,12 +19,15 @@ function checkCDN(ip){
 }
 
 function isBlacklisted(ip, urlDomain){
-  for (var i in blacklistIp) {
+  if(ip == null) {
+    return true;
+  }
+  for (let i in blacklistIp) {
     if(ip.search(blacklistIp[i]) != -1) {
       return true;
     }
   }
-  for (var i in blacklistHosts) {
+  for (let i in blacklistHosts) {
     if(ip.search(blacklistHosts[i]) != -1) {
       return true;
     }
@@ -102,6 +108,7 @@ async function getCertif(srvId, urlDomain, tabId) {
   }
 }
 
+var creditForNewCall = 5;
 async function checkHeader(details) {
   if(! 'tabId' in  details || details.tabId < 0){
     return;
@@ -174,28 +181,32 @@ async function checkHeader(details) {
       updateTabStatus(tabId, tabStatusDanger, urlDomain);
       return;
     } else {
-      if(!checkFromCache(tabId, urlDomain, localSha1, localSha256)) {
-        //If not in cache
-        //FIXME check if checkcertifServers is not empity
-        for(let srvId in checkcertifServers){
-          if (checkcertifServers[srvId].enable) {
-              if(isBlacklisted(details.ip, urlDomain)) {
-                updateTabStatus(tabId, tabStatusBlacklisted, urlDomain);
-              } else {
-                getCertif(srvId, urlDomain, tabId);
-              }
+      if(checkFromCache(tabId, urlDomain, localSha1, localSha256)) {
+        // if in cache
+        if(!isBlacklisted(details.ip, urlDomain)) {
+          // and not blacklisted
+          let r = window.crypto.getRandomValues(new Uint8Array(1))[0] / 2**8;
+          if(r > 0.7 && creditForNewCall > 0){ //FIXME
+            creditForNewCall = creditForNewCall - 1; // to avoid too much call
+            // then send a random domain
+            let r2 = window.crypto.getRandomValues(new Uint8Array(1))[0] / 2**8;
+            r2 = parseInt(r2 * domainsListLength);
+            let urlDomainFake = 'https://' + domainsList[r2];
+            for(let srvId in checkcertifServers){
+              sendMessage(checkcertifServers[srvId], {'url':urlDomainFake});
+            }
           }
         }
       }else{
-        let r = window.crypto.getRandomValues(new Uint8Array(1))[0] / 2**8;
-        if(r > 0.7){ //FIXME
-          // if in cache
-          // then sand fake domain random query
-          let r2 = window.crypto.getRandomValues(new Uint8Array(1))[0] / 2**8;
-          r2 = parseInt(r2 * domainsListLength);
-          let urlDomainFake = 'https://' + domainsList[r2];
+        // if not in cache
+        if(isBlacklisted(details.ip, urlDomain)) {
+          updateTabStatus(tabId, tabStatusBlacklisted, urlDomain);
+        }else {
+          let r = window.crypto.getRandomValues(new Uint8Array(1))[0] / 2**8;
+          creditForNewCall = parseInt(r * 10);
           for(let srvId in checkcertifServers){
-            sendMessage(checkcertifServers[srvId], {'url':urlDomainFake});
+            // call each server to check the certificat
+            getCertif(srvId, urlDomain, tabId);
           }
         }
       }
