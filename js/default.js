@@ -60,6 +60,7 @@ var checkcertifServers = [];
 var blacklistHosts = [];
 var blacklistIp = [];
 var domainsList = [];
+var domainsListLength = 0;
 
 //browser.storage.sync.clear();
 
@@ -122,4 +123,5 @@ gettingItem.then((res) => {
       });
     }
   }
+  domainsListLength = domainsList.length;
 });

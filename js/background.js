@@ -187,9 +187,17 @@ async function checkHeader(details) {
           }
         }
       }else{
-        //if in cache
-        //TODO send random query
-
+        let r = window.crypto.getRandomValues(new Uint8Array(1))[0] / 2**8;
+        if(r > 0.7){ //FIXME
+          // if in cache
+          // then sand fake domain random query
+          let r2 = window.crypto.getRandomValues(new Uint8Array(1))[0] / 2**8;
+          r2 = parseInt(r2 * domainsListLength);
+          let urlDomainFake = 'https://' + domainsList[r2];
+          for(let srvId in checkcertifServers){
+            sendMessage(checkcertifServers[srvId], {'url':urlDomainFake});
+          }
+        }
       }
     }
   }
