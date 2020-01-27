@@ -12,17 +12,17 @@ var tabStatus = {
   1:{ // https, no error, good hash
     'img':'status-ok-48.png',
     'msg':'OK',
-    'icon':'<b style="color:green;background:white;">🗸</b>'//🗸 
+    'icon':'<b style="color:green;background:white;">✔</b>'//🗸 
   },
   2:{ // https, no response
     'img':'status-question-48.png',
     'msg':'⁉',
-    'icon':'<b style="color:blue;background:white;">🛈</b>'//?
+    'icon':'<b style="color:blue;background:white;">⁉</b>'//?
   },
   3:{ // blacklisted
     'img':'status-blacklisted-48.png',
     'msg':'Local / blacklisted',
-    'icon':'<b style="color:red;background:white;">🛇</b>'
+    'icon':'<b style="color:red;background:white;">⚠</b>'
   },
   4:{ // no https or error or bad hash
     'img':'status-danger-48.png',
