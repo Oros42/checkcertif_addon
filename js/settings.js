@@ -54,12 +54,14 @@ function listServer(servers){
 }
 
 async function saveOptions(e) {
-  if(serverName.value || serverUrl.value == "" || serverKey.value == "") {
-    return;
-  }
   spinner.style.display='block';
   editMsg.innerHTML="";
   e.preventDefault();
+  if(serverName.value == "" || serverUrl.value == "" || serverKey.value == "") {
+    spinner.style.display='none';
+    editMsg.innerHTML="Error. Need name, URL and public PGP key";
+    return;
+  }
   let newServerId = document.querySelector("#serverId").value;
   let newServer = {
     "name": serverName.value,
