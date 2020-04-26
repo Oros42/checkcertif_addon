@@ -50,6 +50,9 @@ function isBlacklisted(ip, urlDomain){
 function checkFromCache(tabId, urlDomain, sha1, sha256){
   if(urlDomain in rootCertStats) {
     if(Object.keys(rootCertStats[urlDomain]["remote"]).length !== 0) {
+      if(rootCertStats[urlDomain]["cdn"].length > 0){
+        updateTabStatus(tabId, tabStatusDangerCDN, urlDomain);
+      }
       for(let srvId in rootCertStats[urlDomain]["remote"]){
         if(rootCertStats[urlDomain]["remote"][srvId]["sha1"] == ""
             && rootCertStats[urlDomain]["remote"][srvId]["sha256"] == ""){
