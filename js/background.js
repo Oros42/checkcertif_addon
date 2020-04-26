@@ -14,8 +14,12 @@ function updateTabStatus(tabId, status, urlDomain){
   }
 }
 
-function checkCDN(ip){
-  //TODO detect CloudFlare and other CDN
+function checkCDN(tabId, securityInfo, urlDomain, ip){
+  let sI = securityInfo.certificates[0];
+  if(sI.subject.toLowerCase().indexOf('cloudflare') > 0) {
+    rootCertStats[urlDomain]['cdn'] = "CloudFlare";
+    updateTabStatus(tabId, tabStatusDangerCDN, urlDomain);
+  }
 }
 
 function isBlacklisted(ip, urlDomain){
@@ -151,7 +155,6 @@ async function checkHeader(details) {
     rootCertStats[urlDomain].ip.push(details.ip);
   }
 
-  checkCDN(details.ip);
 
   try{
     var securityInfo = await browser.webRequest.getSecurityInfo(
@@ -185,6 +188,9 @@ async function checkHeader(details) {
         // if in cache
         if(!isBlacklisted(details.ip, urlDomain)) {
           // and not blacklisted
+  
+          checkCDN(tabId, securityInfo, urlDomain, details.ip);
+
           let r = window.crypto.getRandomValues(new Uint8Array(1))[0] / 2**8;
           if(r > 0.7 && creditForNewCall > 0){ //FIXME
             creditForNewCall = creditForNewCall - 1; // to avoid too much call
@@ -202,6 +208,8 @@ async function checkHeader(details) {
         if(isBlacklisted(details.ip, urlDomain)) {
           updateTabStatus(tabId, tabStatusBlacklisted, urlDomain);
         }else {
+          checkCDN(tabId, securityInfo, urlDomain, details.ip);
+
           let r = window.crypto.getRandomValues(new Uint8Array(1))[0] / 2**8;
           creditForNewCall = parseInt(r * 10);
           for(let srvId in checkcertifServers){

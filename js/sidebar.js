@@ -124,6 +124,14 @@ function updateContent() {
               }
               hashsDiv.appendChild(hashsDiv2);
               div.appendChild(hashsDiv);
+
+              //CDN
+              if(certif.cdn.length > 0) {
+                let cdnDiv = document.createElement("div");
+                cdnDiv.innerHTML = "CDN: "+certif.cdn;
+                div.appendChild(cdnDiv);
+
+              }
             }
             div.appendChild(document.createElement("hr"));
 

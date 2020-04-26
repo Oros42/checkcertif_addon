@@ -3,6 +3,7 @@ const tabStatusOk = 1;
 const tabStatusQuestion = 2;
 const tabStatusBlacklisted = 3;
 const tabStatusDanger = 4;
+const tabStatusDangerCDN = 5;
 var tabStatus = {
   0:{ // wait
     'img':'status-wait-48.png',
@@ -28,6 +29,11 @@ var tabStatus = {
     'img':'status-danger-48.png',
     'msg':'Danger !!!',
     'icon':'🛑'//🗶
+  },
+  5:{ // CDN detected
+    'img':'status-danger-CDN-48.png',
+    'msg':'Danger CDN !!!',
+    'icon':'🛑CDN'//🗶
   }
 };
 
