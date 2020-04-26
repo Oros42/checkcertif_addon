@@ -16,7 +16,8 @@ function updateTabStatus(tabId, status, urlDomain){
 
 function checkCDN(tabId, securityInfo, urlDomain, ip){
   let sI = securityInfo.certificates[0];
-  if(sI.subject.toLowerCase().indexOf('cloudflare') > 0) {
+  if(sI.subject.toLowerCase().indexOf('cloudflare') > 0
+    || sI.issuer.toLowerCase().indexOf('cloudflare') > 0) {
     rootCertStats[urlDomain]['cdn'] = "CloudFlare";
     updateTabStatus(tabId, tabStatusDangerCDN, urlDomain);
   }
